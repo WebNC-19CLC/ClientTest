@@ -49,13 +49,11 @@ const LoginForm = ({ setAuth }) => {
       remember: true,
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
-      console.log("submitting...");
-      setTimeout(() => {
-        console.log("submited!!");
-        setAuth(true);
-        navigate(from, { replace: true });
-      }, 2000);
+    onSubmit: (data) => {
+      console.log(data);
+
+      setAuth(true);
+      navigate(from, { replace: true });
     },
   });
 
@@ -129,26 +127,7 @@ const LoginForm = ({ setAuth }) => {
               alignItems="center"
               justifyContent="space-between"
               sx={{ my: 2 }}
-            >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    {...getFieldProps("remember")}
-                    checked={values.remember}
-                  />
-                }
-                label="Remember me"
-              />
-
-              <Link
-                component={RouterLink}
-                variant="subtitle2"
-                to="#"
-                underline="hover"
-              >
-                Forgot password?
-              </Link>
-            </Stack>
+            ></Stack>
 
             <LoadingButton
               fullWidth

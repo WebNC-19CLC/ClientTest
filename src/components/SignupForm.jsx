@@ -8,10 +8,12 @@ import {
   TextField,
   IconButton,
   InputAdornment,
+  Typography,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
+import { axiosClient } from "../config/axios";
 
 /////////////////////////////////////////////////////////////
 let easing = [0.6, -0.05, 0.01, 0.99];
@@ -29,13 +31,10 @@ const SignupForm = ({ setAuth }) => {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const SignupSchema = Yup.object().shape({
-    firstName: Yup.string()
-      .min(2, "Too Short!")
-      .max(50, "Too Long!")
-      .required("First name required"),
-    lastName: Yup.string()
+    username: Yup.string()
       .min(2, "Too Short!")
       .max(50, "Too Long!")
       .required("Last name required"),
@@ -47,17 +46,19 @@ const SignupForm = ({ setAuth }) => {
 
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
+      username: "",
       email: "",
       password: "",
     },
     validationSchema: SignupSchema,
-    onSubmit: () => {
-      setTimeout(() => {
-        setAuth(true);
-        navigate("/", { replace: true });
-      }, 2000);
+    onSubmit: async (data) => {
+      setError("");
+      try {
+        const res = await axiosClient.post("Authenticate/register", data);
+        console.log(res);
+      } catch (e) {}
+      // setAuth(true);
+      // navigate("/", { replace: true });
     },
   });
 
@@ -76,18 +77,10 @@ const SignupForm = ({ setAuth }) => {
           >
             <TextField
               fullWidth
-              label="First name"
-              {...getFieldProps("firstName")}
-              error={Boolean(touched.firstName && errors.firstName)}
-              helperText={touched.firstName && errors.firstName}
-            />
-
-            <TextField
-              fullWidth
-              label="Last name"
-              {...getFieldProps("lastName")}
-              error={Boolean(touched.lastName && errors.lastName)}
-              helperText={touched.lastName && errors.lastName}
+              label="User name"
+              {...getFieldProps("username")}
+              error={Boolean(touched.username && errors.username)}
+              helperText={touched.username && errors.username}
             />
           </Stack>
 
@@ -133,7 +126,7 @@ const SignupForm = ({ setAuth }) => {
               helperText={touched.password && errors.password}
             />
           </Stack>
-
+          {error && <Typography color="error">{error}</Typography>}
           <Box
             component={motion.div}
             initial={{ opacity: 0, y: 20 }}
